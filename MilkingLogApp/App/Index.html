@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="milkApp">
+<head>
+    <title>Milking Log App</title>
+
+    <link href="../Content/bootstrap.css" rel="stylesheet">
+    <link href="../Content/bootstrap-theme.css" rel="stylesheet">
+    <link href="../Content/Site.css" rel="stylesheet">
+    
+    <script src="../Scripts/jquery-1.10.2.js"></script>
+    <script src="../Scripts/bootstrap.js"></script>
+    <script src="../Scripts/moment.js"></script>
+    <script src="../Scripts/angular.js"></script>
+    <script src="../Scripts/angular-route.js"></script>
+    <script src="components/angular-input-date.js"></script>
+
+    <script src="app.js"></script>
+</head>
+<body>
+    <div class="container-narrow" ng-controller="mainController">
+
+        <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="mailto:robert.kovacevic1@gmail.com">Contact</a></li>
+            </ul>
+            <h3 class="muted">Milking Log App</h3>
+        </div>
+
+        <hr>
+
+        <div class="row-fluid marketing">
+            <div class="span6">
+                <h4>Log Milking</h4>
+
+                <p class="bg-info">{{successMessage}}</p>
+                <p class="bg-warning">{{errorMessage}}</p>
+
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Date:</label>
+                        <div class="col-sm-10">
+                            <input type="date" id="milking-date" ng-model="milkingLog.date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Milking times:</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="milkingLog.cycle6"> 6:00
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="milkingLog.cycle12"> 12:00
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="milkingLog.cycle16"> 16:00
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" ng-model="milkingLog.cycle21"> 21:00
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Amount:</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <input type="number" class="form-control" ng-model="milkingLog.amount">
+                                <span class="input-group-addon">liters</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" ng-click="submit()">Submit</button>
+                        </div>
+                    </div>
+                </form>
+                
+            </div>
+
+            <hr />
+
+            <div class="span6">
+                <h4>Milk production</h4>
+                <table class="table table-striped">
+                   <thead>
+                       <tr>
+                           <td>Date</td>
+                           <td>Amount milked</td>
+                       </tr>
+                   </thead>
+                    <tbody>
+                        <tr ng-repeat="milkingLog in milkingLogs">
+                            <td>{{milkingLog.date | date: 'dd. MM. yyyy'}}</td>
+                            <td>{{milkingLog.amount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="footer">
+            <p>&copy; Robert Kovacevic 2014</p>
+        </div>
+
+    </div> <!-- /container -->
+</body>
+</html>

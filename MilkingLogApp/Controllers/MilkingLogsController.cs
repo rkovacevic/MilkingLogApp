@@ -17,57 +17,18 @@ namespace MilkingLogApp.Controllers
         private MilkingLogAppContext db = new MilkingLogAppContext();
 
         // GET: api/MilkingLogs
-        public IQueryable<MilkingLog> GetMilkingLogs()
+        public IQueryable<DateMilkingLog> GetMilkingLogs()
         {
-            return db.MilkingLogs;
-        }
-
-        // GET: api/MilkingLogs/5
-        [ResponseType(typeof(MilkingLog))]
-        public IHttpActionResult GetMilkingLog(int id)
-        {
-            MilkingLog milkingLog = db.MilkingLogs.Find(id);
-            if (milkingLog == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(milkingLog);
-        }
-
-        // PUT: api/MilkingLogs/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutMilkingLog(int id, MilkingLog milkingLog)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != milkingLog.id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(milkingLog).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MilkingLogExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            var dateMilkingLogs = from m in db.MilkingLogs
+                                  group m by m.date into g
+                                  let amountSum = g.Sum(m => m.amount)
+                                  orderby g.Key descending
+                                  select new DateMilkingLog()
+                                  {
+                                      date = g.Key,
+                                      amount = amountSum
+                                  };
+            return dateMilkingLogs;
         }
 
         // POST: api/MilkingLogs
@@ -79,26 +40,26 @@ namespace MilkingLogApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            var milkingLogs = db.MilkingLogs.Where(m => m.date == milkingLog.date);
+
+            foreach (var previousMilkingLog in milkingLogs)
+            {
+                System.Diagnostics.Debug.WriteLine(previousMilkingLog.date + " " + previousMilkingLog.amount);
+
+                if (previousMilkingLog.IsSubsetOf(milkingLog))
+                {
+                    db.MilkingLogs.Remove(previousMilkingLog);
+                }
+                else if (previousMilkingLog.IsOverlapingWith(milkingLog)) 
+                {
+                    return BadRequest("Selected cycles overlap with the previous entry");
+                }
+            }
+
             db.MilkingLogs.Add(milkingLog);
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = milkingLog.id }, milkingLog);
-        }
-
-        // DELETE: api/MilkingLogs/5
-        [ResponseType(typeof(MilkingLog))]
-        public IHttpActionResult DeleteMilkingLog(int id)
-        {
-            MilkingLog milkingLog = db.MilkingLogs.Find(id);
-            if (milkingLog == null)
-            {
-                return NotFound();
-            }
-
-            db.MilkingLogs.Remove(milkingLog);
-            db.SaveChanges();
-
-            return Ok(milkingLog);
         }
 
         protected override void Dispose(bool disposing)
