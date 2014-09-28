@@ -81,7 +81,7 @@
 
             <div class="span6">
                 <h4>Milk production</h4>
-                <table class="table table-striped">
+                <table class="table table-striped" ng-show="milkingLogs">
                    <thead>
                        <tr>
                            <td>Date</td>
@@ -95,7 +95,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <p class="bg-warning" ng-hide="milkingLogs">Loading data...</p>
             </div>
+
         </div>
 
         <hr>

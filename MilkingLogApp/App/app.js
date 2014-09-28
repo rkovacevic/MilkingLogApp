@@ -45,6 +45,7 @@
         }
         var milkingLogForSending = angular.copy($scope.milkingLog);
         milkingLogForSending.date = moment($scope.milkingLog.date).startOf('day').format();
+        $scope.milkingLogs = null;
         $http.post(
                '/api/MilkingLogs',
                milkingLogForSending,
