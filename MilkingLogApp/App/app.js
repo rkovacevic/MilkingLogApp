@@ -21,18 +21,26 @@
     resetMilkingLog();
     fetchMilkingLogs();
 
-    $scope.$watch('[successMessage, errorMessage]', function () {
-        if ($scope.successMessage == null && $scope.errorMessage == null) return;
+    var clearMessages = function () {
         $timeout(function () {
             $scope.successMessage = null;
             $scope.errorMessage = null;
         }, 3000);
-    });
+    }
+    var success = function (message) {
+        $scope.successMessage = message;
+        clearMessages();
+    }
+
+    var error = function (message) {
+        $scope.errorMessage = message;
+        clearMessages();
+    }
 
     $scope.submit = function () {
         if (!$scope.milkingLog.cycle6 && !$scope.milkingLog.cycle12 &&
             !$scope.milkingLog.cycle16 && !$scope.milkingLog.cycle21) {
-            $scope.errorMessage = "Select at least one cycle";
+            error("Select at least one cycle");
             return;
         }
         var milkingLogForSending = angular.copy($scope.milkingLog);
@@ -48,9 +56,9 @@
            ).success(function (data) {
                resetMilkingLog();
                fetchMilkingLogs();
-               $scope.successMessage = "Added milking log";
+               success("Added milking log");
            }).error(function (data) {
-               $scope.errorMessage = data.Message;
+               error(data.Message);
            });
     }
 });;

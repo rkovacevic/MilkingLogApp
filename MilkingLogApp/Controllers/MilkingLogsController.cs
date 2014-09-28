@@ -44,8 +44,6 @@ namespace MilkingLogApp.Controllers
 
             foreach (var previousMilkingLog in milkingLogs)
             {
-                System.Diagnostics.Debug.WriteLine(previousMilkingLog.date + " " + previousMilkingLog.amount);
-
                 if (previousMilkingLog.IsSubsetOf(milkingLog))
                 {
                     db.MilkingLogs.Remove(previousMilkingLog);
